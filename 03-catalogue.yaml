@@ -1,0 +1,62 @@
+- name: setting up catalogue component
+  hosts: catalogue
+  become: yes
+  tasks:
+
+  - name: disable old nodejs and enable nodejs
+    ansible.builtin.shell: dnf module disable nodejs -y ; dnf module enable nodejs:18 -y
+  
+  - name: installing
+    ansible.builtin.dnf: 
+      name: nodejs 
+      state: present
+  
+  - name: creating the user 
+    ansible.builtin.user:
+      name: roboshop
+
+  - name: creating directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+
+  - name: downloading and unzipping
+    ansible.builtin.unarchive:
+      src: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Install dependencies
+    ansible.builtin.command: npm install
+    args:
+      chdir: /app
+
+  - name: copying catalogue service file
+    ansible.builtin.copy:
+      src: catalogue.service
+      dest: /etc/systemd/system/catalogue.service
+
+  - name: daemon reloading
+    ansible.builtin.systemd_service:
+      state: started
+
+  - name: enabling and starting catalogue 
+    ansible.builtin.service:
+      state: started
+      enabled: true
+
+  - name: copying mongo repo
+    ansible.builtin.copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+
+  - name: load catalogue data
+    ansible.builtin.command: mongo --host mongodb.sureshvadde.online < /app/schema/catalogue.js
+
+  - name: restarting catalogue 
+    ansible.builtin.service:
+      state: restarted
+
+
+
+

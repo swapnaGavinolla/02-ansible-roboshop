@@ -1,0 +1,60 @@
+- name: setting up shipping component
+  hosts: shipping
+  become: yes
+  tasks:
+
+  - name: installing maven
+    ansible.builtin.dnf:
+      name: maven
+      state: installed
+
+  - name: creating the user 
+    ansible.builtin.user:
+      name: roboshop
+
+  - name: creating directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+
+  - name: downloading and unzipping
+    ansible.builtin.unarchive:
+      src: https://roboshop-builds.s3.amazonaws.com/shipping.zip
+      dest: /app
+      remote_src: yes 
+
+   - name: Install dependencies
+      ansible.builtin.command: maven clean package
+      args:
+        chdir: /app
+
+    - name: rename jar file
+      ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
+        args:
+          chdir: /app
+
+    - name: copying shipping service
+      ansible.builtin.copy:
+        src: shipping.service
+        dest: /etc/systemd/system/shipping.service
+
+    - name: daemon reloading
+    ansible.builtin.systemd_service:
+      state: started
+
+    - name: enabling and starting shipping 
+      ansible.builtin.service:
+        state: started
+        enabled: true
+
+    - name: installing maven
+      ansible.builtin.dnf:
+        name: mysql
+        state: installed  
+
+    - name: load catalogue data
+      ansible.builtin.command: mysql -h mysql.sureshvadde.online -uroot -pRoboShop@1 < /app/schema/shipping.sql 
+
+    - name: restarting shipping 
+      ansible.builtin.service:
+        state: restarted     

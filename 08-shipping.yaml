@@ -29,7 +29,7 @@
       remote_src: true
 
   - name: Install dependencies
-    ansible.builtin.command: maven clean package
+    ansible.builtin.command: mvn clean package
     args:
       chdir: /app
 

@@ -54,7 +54,7 @@
       name: mysql
       state: present
 
-  - name: load catalogue data
+  - name: load shipping data
     ansible.builtin.shell: "mysql -h mysql.sureshvadde.online -uroot -p{{mysql_password}} < /app/schema/shipping.sql" 
 
   - name: restarting shipping 

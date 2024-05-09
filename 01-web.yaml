@@ -5,12 +5,7 @@
   - name: installing nginx
     ansible.builtin.dnf:
       name: nginx
-      state: installed
-
-  - name: enabling and starting nginx
-    ansible.builtin.service:
-      state: started
-      enabled: true
+      state: present
 
   - name: remove html directory
     ansible.builtin.file:
@@ -43,3 +38,4 @@
       name: nginx
       state: restarted
       enabled: yes
+    

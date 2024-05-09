@@ -22,7 +22,7 @@
 
   - name: downloading and unzipping
     ansible.builtin.unarchive:
-      src: /tmp/payment.zip https://roboshop-builds.s3.amazonaws.com/payment.zip
+      src: https://roboshop-builds.s3.amazonaws.com/payment.zip
       dest: /app
       remote_src: true
 

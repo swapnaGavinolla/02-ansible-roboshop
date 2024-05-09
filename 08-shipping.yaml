@@ -1,6 +1,8 @@
 - name: setting up shipping component
   hosts: shipping
   become: yes
+  vars:
+    mysql_password: RoboShop@1
   tasks:
 
   - name: installing maven
@@ -53,7 +55,7 @@
       state: present
 
   - name: load catalogue data
-    ansible.builtin.command: mysql -h mysql.sureshvadde.online -uroot -pRoboShop@1 < /app/schema/shipping.sql 
+    ansible.builtin.command: "mysql -h mysql.sureshvadde.online -uroot -p{{mysql_password}} < /app/schema/shipping.sql" 
 
   - name: restarting shipping 
     ansible.builtin.service:

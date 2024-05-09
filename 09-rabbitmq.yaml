@@ -3,7 +3,7 @@
   become: yes
   tasks:
     - name: configuring rabbitmq repos
-      ansible.builtin.shell: "https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash" ; "https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash"
+      ansible.builtin.shell: curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash ; curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash
 
     - name: installing rabbitmq 
       ansible.builtin.dnf: 
